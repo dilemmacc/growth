@@ -1,0 +1,14 @@
+<resources>
+  <string name="app_name">growth</string>
+  <string name="title_home">今日计划</string>
+  <string name="title_dashboard">任务中心</string>
+  <string name="title_notifications">成长轨迹</string>
+
+  <string name="home_title_today_task">%1s任务</string>
+  <string name="home_finish_today_task">完成</string>
+
+
+  <string name="dashboard_title_task_center">任务中心</string>
+
+
+</resources>
