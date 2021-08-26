@@ -8,5 +8,6 @@ import android.content.Context
  * 2021-08-22 22:43
  */
 object GlobalData {
-  var context: Context? = null
+  lateinit var context: Context
+  var isDeveloperMode: Boolean = false
 }

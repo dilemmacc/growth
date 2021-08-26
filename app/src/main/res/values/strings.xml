@@ -1,5 +1,9 @@
 <resources>
   <string name="app_name">growth</string>
+  <string name="cancel">取消</string>
+  <string name="confirm">保存</string>
+  <string name="sure">确定</string>
+
   <string name="title_home">今日计划</string>
   <string name="title_dashboard">任务中心</string>
   <string name="title_notifications">成长轨迹</string>

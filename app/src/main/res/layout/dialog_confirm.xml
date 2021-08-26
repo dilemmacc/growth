@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ytech.ksavatar.common.widget.roundcorners.RoundLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="39dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp"
+    android:paddingBottom="26dp"
+    android:background="@color/color_dialog_bg2"
+    app:rRadius="16dp">
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:text="是否保存此设置"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:layout_gravity="center"
+        >
+
+        <com.ytech.ksavatar.common.widget.roundcorners.RoundTextView
+            android:id="@+id/cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            app:rStrokeColor="@color/white"
+            android:paddingLeft="31dp"
+            android:paddingRight="31dp"
+            android:paddingTop="10dp"
+            app:rRadius="22dp"
+            app:rStrokeWidth="1px"
+            android:paddingBottom="10dp"
+            android:textSize="18dp" />
+
+        <com.ytech.ksavatar.common.widget.roundcorners.RoundTextView
+            android:id="@+id/confirm_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/cancel_btn"
+            android:gravity="center"
+            android:layout_marginLeft="35dp"
+            android:text="@string/confirm"
+            android:textColor="@color/white"
+            android:paddingLeft="31dp"
+            android:paddingRight="31dp"
+            android:paddingTop="10dp"
+            app:rRadius="22dp"
+            app:rStrokeColor="@color/color_dialog_confirm_bg"
+            android:background="@color/color_dialog_confirm_bg"
+            app:rStrokeWidth="1px"
+            android:paddingBottom="10dp"
+            android:textSize="18dp" />
+
+
+    </RelativeLayout>
+
+
+
+
+
+</com.ytech.ksavatar.common.widget.roundcorners.RoundLinearLayout>

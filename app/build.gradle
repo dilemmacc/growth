@@ -8,7 +8,7 @@ apply plugin: 'kotlin-kapt'
 android {
   signingConfigs {
     myconfig {
-      storeFile file('/Users/ruichao/projects/growth/keystore.jks')
+      storeFile file("$rootProject.projectDir/keystore.jks")
       storePassword '123456'
       keyAlias = 'growth'
       keyPassword '123456'
@@ -28,6 +28,9 @@ android {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.myconfig
+    }
+    debug {
       signingConfig signingConfigs.myconfig
     }
   }
@@ -68,8 +71,6 @@ dependencies {
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
   implementation "androidx.viewpager2:viewpager2:1.0.0"
-  implementation "com.alibaba:arouter-api:1.5.0"
-  kapt "com.alibaba:arouter-compiler:1.2.2"
 
   //room
   implementation 'androidx.room:room-runtime:2.3.0-alpha01'

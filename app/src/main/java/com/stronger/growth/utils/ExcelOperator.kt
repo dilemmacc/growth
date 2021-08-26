@@ -1,8 +1,9 @@
 package com.stronger.growth.utils
 
 import android.content.Context
-import android.view.View
 import com.stronger.growth.GlobalData
+import com.stronger.growth.data.ExcelItem
+import com.stronger.growth.utils.log.LogHelper
 import org.apache.poi.hssf.usermodel.HSSFDateUtil
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.FormulaEvaluator
@@ -11,6 +12,7 @@ import org.apache.poi.ss.util.WorkbookUtil
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URLDecoder
 import java.text.SimpleDateFormat
 
 /**
@@ -20,90 +22,97 @@ import java.text.SimpleDateFormat
  */
 object ExcelOperator {
 
-  fun onReadClick(view: View) {
-//    printlnToUser("reading XLSX file from resources")
-//    val stream = getResources().openRawResource(R.raw.test1)
-    val stream = FilePathUtil.getCachePath()
-    try {
-      val workbook = XSSFWorkbook(stream)
-      val sheet = workbook.getSheetAt(0)
-      val rowsCount = sheet.getPhysicalNumberOfRows()
-      val formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator()
-      for (r in 0 until rowsCount) {
-        val row = sheet.getRow(r)
-        val cellsCount = row.getPhysicalNumberOfCells()
-        for (c in 0 until cellsCount) {
-          val value = getCellAsString(row, c, formulaEvaluator)
-          val cellInfo = "r:$r; c:$c; v:$value"
-//          printlnToUser(cellInfo)
-        }
-      }
-    } catch (e: Exception) {
-      /* proper exception handling to be here */
+    fun readXml(path: String) {
+        //构建excelDatas
+        var dataMap: MutableMap<String, MutableList<ExcelItem>> = mutableMapOf()
+
+        try {
+            var stream = URLDecoder.decode(path, "UTF-8")
+            val workbook = XSSFWorkbook(stream)
+            val sheetCnt = workbook.numberOfSheets
+            for (index in 0..sheetCnt) {
+                val title = workbook.getSheetName(index)
+                var list = mutableListOf<ExcelItem>()
+                val sheet = workbook.getSheetAt(index)
+                val rowsCount = sheet.physicalNumberOfRows
+                val formulaEvaluator = workbook.creationHelper.createFormulaEvaluator()
+                //r -行值
+                for (r in 0 until rowsCount) {
+                    val row = sheet.getRow(r)
+                    val cellsCount = row.physicalNumberOfCells
+                    //c-列值
+                    for (c in 0 until cellsCount) {
+                        val value = getCellAsString(row, c, formulaEvaluator)
+
+                        val cellInfo = "r:$r; c:$c; v:$value"
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            LogHelper.tag("rachel").e("readXml fail:${e.message}")
 //      printlnToUser(e.toString())
+        }
+
     }
 
-  }
-
-  fun onWriteClick(view: View) {
+    fun writeXml() {
 //    printlnToUser("writing xlsx file")
-    val workbook = XSSFWorkbook()
-    val sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("mysheet"))
-    for (i in 0..9) {
-      val row = sheet.createRow(i)
-      val cell = row.createCell(0)
-      cell.setCellValue(i.toDouble())
-    }
-    val outFileName = "filetoshare.xlsx"
-    try {
-//      printlnToUser("writing file $outFileName")
-      val cacheDir = FilePathUtil.getCachePath()
-      val outFile = File(cacheDir, outFileName)
-      val outputStream = FileOutputStream(outFile.absolutePath)
-      workbook.write(outputStream)
-      outputStream.flush()
-      outputStream.close()
-//      printlnToUser("sharing file...")
-      share(outFileName, GlobalData.context!!)
-    } catch (e: Exception) {
-      /* proper exception handling to be here */
-//      printlnToUser(e.toString())
-    }
-
-  }
-
-  private fun getCellAsString(row: Row, c: Int, formulaEvaluator: FormulaEvaluator): String {
-    var value = ""
-    try {
-      val cell = row.getCell(c)
-      val cellValue = formulaEvaluator.evaluate(cell)
-      when (cellValue.cellType) {
-        Cell.CELL_TYPE_BOOLEAN -> value = "" + cellValue.booleanValue
-        Cell.CELL_TYPE_NUMERIC -> {
-          val numericValue = cellValue.numberValue
-          if (HSSFDateUtil.isCellDateFormatted(cell)) {
-            val date = cellValue.numberValue
-            val formatter = SimpleDateFormat("dd/MM/yy")
-            value = formatter.format(HSSFDateUtil.getJavaDate(date))
-          } else {
-            value = "" + numericValue
-          }
+        val workbook = XSSFWorkbook()
+        val sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("mysheet"))
+        for (i in 0..9) {
+            val row = sheet.createRow(i)
+            val cell = row.createCell(0)
+            cell.setCellValue(i.toDouble())
         }
-        Cell.CELL_TYPE_STRING -> value = "" + cellValue.stringValue
-      }
-    } catch (e: NullPointerException) {
-      /* proper error handling should be here */
+        try {
+            val outFileName = FilePathUtil.getXMLPath_Backup()
+            val outFile = File(outFileName)
+            val outputStream = FileOutputStream(outFile.absolutePath)
+            workbook.write(outputStream)
+            outputStream.flush()
+            outputStream.close()
+//      printlnToUser("sharing file...")
+            share(outFileName, GlobalData.context!!)
+        } catch (e: Exception) {
+            /* proper exception handling to be here */
 //      printlnToUser(e.toString())
+        }
+
     }
 
-    return value
-  }
+    private fun getCellAsString(row: Row, c: Int, formulaEvaluator: FormulaEvaluator): String {
+        var value = ""
+        try {
+            val cell = row.getCell(c)
+            val cellValue = formulaEvaluator.evaluate(cell)
+            when (cellValue.cellType) {
+                Cell.CELL_TYPE_BOOLEAN -> value = "" + cellValue.booleanValue
+                Cell.CELL_TYPE_NUMERIC -> {
+                    val numericValue = cellValue.numberValue
+                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                        val date = cellValue.numberValue
+                        val formatter = SimpleDateFormat("dd/MM/yy")
+                        value = formatter.format(HSSFDateUtil.getJavaDate(date))
+                    } else {
+                        value = "" + numericValue
+                    }
+                }
+                Cell.CELL_TYPE_STRING -> value = "" + cellValue.stringValue
+            }
+        } catch (e: NullPointerException) {
+            /* proper error handling should be here */
+//      printlnToUser(e.toString())
+        }
 
-  /**
-   * print line to the output TextView
-   * @param str
-   */
-//  private fun printlnToUser(str: String) {
+        return value
+    }
+
+    /**
+     * print line to the output TextView
+     * @param str
+     */
+    private fun printlnToUser(str: String) {
 //    if (output.length() > 8000) {
 //      var fullOutput: CharSequence = output.getText()
 //      fullOutput = fullOutput.subSequence(5000, fullOutput.length)
@@ -111,9 +120,9 @@ object ExcelOperator {
 //      output.setSelection(fullOutput.length)
 //    }
 //    output.append(str + "\n")
-//  }
+    }
 
-  fun share(fileName: String, context: Context) {
+    fun share(fileName: String, context: Context) {
 //    val fileUri = Uri.parse("content://" + getPackageName() + "/" + fileName)
 //    printlnToUser("sending $fileUri ...")
 //    val shareIntent = Intent()
@@ -121,5 +130,5 @@ object ExcelOperator {
 //    shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
 //    shareIntent.type = "application/octet-stream"
 //    startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)))
-  }
+    }
 }
